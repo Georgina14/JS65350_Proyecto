@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- JS -->
     <script defer src="./main.js"></script>
-    <title>Lista de Tareas</title>
+    <title>Gestor de Tareas</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <h1>Lista de Tareas</h1>
+    <header>
+        <h1>Gestor de Tareas</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Agregar Tarea</h2>
+            <input id="input-tarea" type="text" placeholder="Escribe aquí" />
+            <button id="btn-agregar">Agregar Tarea</button>
+        </section>
+
+        <section>
+            <h2>Tareas Pendientes</h2>
+            <ul id="lista-pendientes"></ul>
+        </section>
+
+        <section>
+            <h2>Tareas Completadas</h2>
+            <button id="btn-mostrar-completadas">Mostrar</button>
+            <ul id="lista-completadas"></ul>
+        </section>
+    </main>
 </body>
+
 </html>

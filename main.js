@@ -1,99 +1,100 @@
-// Variables y constantes
-let tareas = []; 
-const maxTareas = 10; 
+// Variables
+let tareasPendientes = JSON.parse(localStorage.getItem("tareasPendientes")) || [];
+let tareasCompletadas = JSON.parse(localStorage.getItem("tareasCompletadas")) || [];
 
-console.log("Máximo de tareas permitidas en Lista de Tareas:", maxTareas);
+// DOM
+const inputTarea = document.getElementById("input-tarea");
+const btnAgregar = document.getElementById("btn-agregar");
+const btnMostrarCompletadas = document.getElementById("btn-mostrar-completadas");
+const listaPendientes = document.getElementById("lista-pendientes");
+const listaCompletadas = document.getElementById("lista-completadas");
 
-// Función para agregar una tarea
+// Functions
 function agregarTarea() {
-    if (tareas.length >= maxTareas) {
-        console.log("Error: No se puede agregar más tareas. Límite alcanzado.");
-        alert("No podes agregar más tareas. Has alcanzado el límite máximo.");
-        return;
-    }
+    const tarea = inputTarea.value.trim();
 
-    const nuevaTarea = prompt("Ingresá una nueva tarea:");
-    if (!nuevaTarea || nuevaTarea.trim() === "") {
-        console.log("Error: Tarea no válida. El usuario ingresó una tarea vacía.");
+    if (!tarea) {
         alert("La tarea no puede estar vacía.");
         return;
     }
 
-    tareas.push(nuevaTarea.trim()); 
-    console.log(`Tarea agregada: "${nuevaTarea.trim()}"`);
-    console.log("Estado actual de las tareas:", tareas);
-    mostrarTareas();
+    tareasPendientes.push(tarea);
+    guardarDatos();
+    inputTarea.value = "";
+    mostrarPendientes();
 }
 
-// Función para mostrar todas las tareas
-function mostrarTareas() {
-    if (tareas.length === 0) {
-        console.log("No hay tareas para mostrar.");
-        alert("La lista de tareas está vacía.");
+// Tareas Pendientes
+function mostrarPendientes() {
+    listaPendientes.innerHTML = ""; 
+
+    if (tareasPendientes.length === 0) {
+        listaPendientes.textContent = "No hay tareas pendientes.";
         return;
     }
 
-    let lista = "Tus tareas:\n";
-    for (let i = 0; i < tareas.length; i++) {
-        lista += `${i + 1}. ${tareas[i]}\n`;
-    }
+    tareasPendientes.forEach((tarea, index) => {
+        const li = document.createElement("li");
+        li.textContent = tarea;
 
-    console.log("Mostrando tareas:");
-    console.log(lista);
-    alert(lista); 
+        // Botón Completar
+        const btnCompletar = document.createElement("button");
+        btnCompletar.textContent = "Completar";
+        btnCompletar.classList.add("complete");
+        btnCompletar.addEventListener("click", () => completarTarea(index));
+
+        // Botón Eliminar
+        const btnEliminar = document.createElement("button");
+        btnEliminar.textContent = "Eliminar";
+        btnEliminar.classList.add("delete");
+        btnEliminar.addEventListener("click", () => eliminarPendiente(index));
+
+        li.appendChild(btnCompletar);
+        li.appendChild(btnEliminar);
+        listaPendientes.appendChild(li);
+    });
 }
 
-// Función para eliminar una tarea
-function eliminarTarea() {
-    if (tareas.length === 0) {
-        console.log("Error: No hay tareas para eliminar.");
-        alert("No hay tareas para eliminar.");
+// Completar
+function completarTarea(index) {
+    const tareaCompletada = tareasPendientes.splice(index, 1)[0];
+    tareasCompletadas.push(tareaCompletada);
+    guardarDatos();
+    mostrarPendientes();
+}
+
+// Tareas Pendientes
+function eliminarPendiente(index) {
+    tareasPendientes.splice(index, 1);
+    guardarDatos();
+    mostrarPendientes();
+}
+
+// Mostrar tareas completadas
+function mostrarCompletadas() {
+    listaCompletadas.innerHTML = "";
+
+    if (tareasCompletadas.length === 0) {
+        listaCompletadas.textContent = "No hay tareas completadas.";
         return;
     }
 
-    const indice = parseInt(prompt("Ingresá el número de la tarea que queres eliminar:")) - 1;
-
-    if (isNaN(indice) || indice < 0 || indice >= tareas.length) {
-        console.log("Error: El usuario ingresó un número inválido.");
-        alert("Número inválido. Intentá de nuevo.");
-        return;
-    }
-
-    const tareaEliminada = tareas.splice(indice, 1); 
-    console.log(`Tarea eliminada: "${tareaEliminada}"`);
-    console.log("Estado actual de las tareas:", tareas);
-    mostrarTareas();
+    tareasCompletadas.forEach((tarea) => {
+        const li = document.createElement("li");
+        li.textContent = tarea;
+        listaCompletadas.appendChild(li);
+    });
 }
 
-// Menú principal
-function menuPrincipal() {
-    let continuar = true;
 
-    while (continuar) {
-        const opcion = prompt(
-            "Lista de Tareas\n\nElige una opción:\n1. Agregar tarea\n2. Mostrar tareas\n3. Eliminar tarea\n4. Salir"
-        );
-
-        switch (opcion) {
-            case "1":
-                agregarTarea();
-                break;
-            case "2":
-                mostrarTareas();
-                break;
-            case "3":
-                eliminarTarea();
-                break;
-            case "4":
-                continuar = confirm("¿Estás seguro de que querés salir?");
-                console.log("El usuario decidió salir del simulador.");
-                break;
-            default:
-                console.log("El usuario ingresó una opción inválida.");
-                alert("Opción no válida. Intenta de nuevo.");
-        }
-    }
+function guardarDatos() {
+    localStorage.setItem("tareasPendientes", JSON.stringify(tareasPendientes));
+    localStorage.setItem("tareasCompletadas", JSON.stringify(tareasCompletadas));
 }
 
-// Iniciar el simulador
-menuPrincipal();
+// Event Listeners
+btnAgregar.addEventListener("click", agregarTarea);
+btnMostrarCompletadas.addEventListener("click", mostrarCompletadas);
+
+// Iniciar
+mostrarPendientes();
