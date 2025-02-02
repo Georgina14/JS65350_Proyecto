@@ -45,11 +45,15 @@ button.delete {
     background-color: #dc3545;
 }
 
+button.edit {
+    background-color: darkgoldenrod;
+}
+
 button:hover {
     opacity: 0.8;
 }
 
-ul {
+ol {
     list-style-type: none;
     padding: 0;
 }
